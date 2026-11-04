@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>继承之战 · SUCCESSION 打卡</title>
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon-180.png">
+<link rel="manifest" href="manifest.json">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{background:#111210;color:#E8E4DA;font-family:Georgia,'Times New Roman','Noto Serif SC',serif;min-height:100vh;padding-bottom:5rem}
+a{text-decoration:none;color:inherit}
+/* 头 */
+header{padding:2.6rem 1.2rem 1.6rem;text-align:center;background:linear-gradient(#1A1B18,#111210)}
+.eyebrow{letter-spacing:.42em;font-size:.62rem;color:#9A958A;text-transform:uppercase}
+h1{font-size:2.9rem;letter-spacing:.08em;color:#D5C48E;font-weight:400;margin:.5rem 0 .2rem;font-variant:small-caps}
+.sub{font-size:.86rem;color:#B5AF9F;letter-spacing:.2em}
+.intro{max-width:30rem;margin:1.2rem auto 0;font-size:.9rem;line-height:1.75;color:#8E897C;border-top:1px solid #2E2F2A;border-bottom:1px solid #2E2F2A;padding:.9rem 0}
+.intro b{color:#C9A24A;font-weight:400}
+/* HUD */
+#hud{position:sticky;top:0;z-index:50;background:rgba(17,18,16,.93);backdrop-filter:blur(8px);border-bottom:1px solid #2E2F2A;padding:.6rem 1.2rem;display:flex;justify-content:space-between;align-items:center;font-size:.82rem;letter-spacing:.12em}
+#hud .p{color:#D5C48E;font-variant:small-caps}
+#hud .r{color:#8E897C}
+/* 季区 */
+.season{margin:1.6rem 1rem 0}
+.sh{display:flex;align-items:baseline;gap:.7rem;border-bottom:1px solid #2E2F2A;padding-bottom:.5rem}
+.sh .num{font-size:1.5rem;color:#6E6A5E;font-variant:small-caps;letter-spacing:.1em}
+.sh .nm{font-size:1.15rem;letter-spacing:.15em;color:#E8E4DA}
+.sh .yr{font-size:.72rem;color:#8E897C;letter-spacing:.2em}
+.sh .cnt{margin-left:auto;font-size:.78rem;color:#9A958A}
+.tagline{font-size:.8rem;color:#7E7970;margin:.55rem 0 .9rem;letter-spacing:.04em}
+/* 格子墙 */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(6.4rem,1fr));gap:.55rem}
+.ep{position:relative;background:#191A17;border:1px solid #2A2B26;border-radius:4px;padding:.75rem .6rem .65rem;min-height:5.2rem;cursor:pointer;transition:border-color .25s,background .25s,transform .15s}
+.ep:active{transform:scale(.97)}
+.ep .en2{font-size:.55rem;color:#7A766C;letter-spacing:.18em}
+.ep .no{font-size:.95rem;color:#D5C48E;margin:.15rem 0 .3rem;font-variant:small-caps;letter-spacing:.05em}
+.ep .tt{font-size:.68rem;line-height:1.35;color:#B5AF9F;font-style:italic;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ep .dt{font-size:.56rem;color:#6E6A5E;margin-top:.35rem;letter-spacing:.05em}
+.ep .star{position:absolute;top:.4rem;right:.45rem;color:#C9A24A;font-size:.6rem}
+.ep.lit{background:#211F16;border-color:#C9A24A66}
+.ep.lit .no{color:#C9A24A}
+.ep.lit .tt{color:#D9D3C4}
+.ep .tick{position:absolute;bottom:.4rem;right:.45rem;width:.9rem;height:.9rem;border:1px solid #4A4B44;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:transparent}
+.ep.lit .tick{background:#C9A24A;border-color:#C9A24A;color:#111210;font-weight:700}
+/* 详情卡 sheet */
+#ovl{position:fixed;inset:0;background:rgba(8,8,7,.72);z-index:90;opacity:0;pointer-events:none;transition:opacity .25s}
+#ovl.on{opacity:1;pointer-events:auto}
+#card{position:fixed;left:50%;bottom:-100%;transform:translateX(-50%);width:min(30rem,94vw);background:#191A17;border:1px solid #3A3B34;border-top:2px solid #C9A24A;z-index:95;padding:1.6rem 1.4rem 1.3rem;border-radius:6px 6px 0 0;transition:bottom .3s ease;max-height:82vh;overflow-y:auto}
+#card.up{bottom:0}
+#card .ce{font-size:.6rem;color:#9A958A;letter-spacing:.3em}
+#card h3{font-size:1.55rem;color:#D5C48E;font-weight:400;margin:.35rem 0 .5rem;font-style:italic}
+#card .cd{font-size:.72rem;color:#8E897C;letter-spacing:.12em;border-bottom:1px solid #2E2F2A;padding-bottom:.8rem}
+#card .cd .lm{color:#C9A24A}
+#card .ds{font-size:.95rem;line-height:1.85;color:#CFC9BC;margin:.95rem 0 1.3rem}
+#card .ls{display:flex;gap:.6rem}
+#card .ls button{flex:1;padding:.75rem;border:1px solid #4A4B44;background:none;color:#B5AF9F;font-family:inherit;font-size:.85rem;letter-spacing:.15em;border-radius:3px;cursor:pointer}
+#card .ls .done{background:#C9A24A;border-color:#C9A24A;color:#111210}
+#card .ls .nope{color:#7A766C}
+/* 徽章 */
+#badge{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:120;background:rgba(8,8,7,.94);opacity:0;pointer-events:none;transition:opacity .5s;text-align:center;padding:2rem}
+#badge.on{opacity:1;pointer-events:auto}
+#badge .seal{width:9.5rem;height:9.5rem;border:2px solid #C9A24A;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#C9A24A;margin-bottom:1.6rem;position:relative}
+#badge .seal:before{content:'';position:absolute;inset:.5rem;border:1px dashed #C9A24A99;border-radius:50%}
+#badge .seal .b1{font-size:1.1rem;letter-spacing:.2em;font-variant:small-caps}
+#badge .seal .b2{font-size:.6rem;letter-spacing:.25em;margin-top:.3rem;color:#B5AF9F}
+#badge .bt{font-size:1.3rem;color:#E8E4DA;letter-spacing:.15em;margin-bottom:.7rem}
+#badge .bq{font-size:.85rem;color:#8E897C;font-style:italic;max-width:22rem;line-height:1.8}
+#badge .close{margin-top:1.8rem;padding:.6rem 2rem;border:1px solid #4A4B44;background:none;color:#B5AF9F;font-family:inherit;letter-spacing:.2em;font-size:.75rem;border-radius:3px;cursor:pointer}
+footer{margin-top:3.5rem;text-align:center;font-size:.68rem;color:#6E6A5E;line-height:2;padding:0 1.5rem;letter-spacing:.08em}
+</style>
+</head>
+<body>
+<header>
+<div class="eyebrow">HBO ORIGINAL SERIES</div>
+<h1>Succession</h1>
+<div class="sub">继 承 之 战 · 2018–2023 · 四季三十九集</div>
+<div class="intro">传媒帝国 <b>威士达罗伊科（Waystar Royco）</b>的掌门人罗根·罗伊年事已高，四个子女各怀心思——权力、忠诚与爱在谈判桌上互相绞杀。看一集，点亮一集。</div>
+</header>
+<div id="hud"><span class="p">Succession</span><span id="h2">0/39</span><span class="r" id="h3">未启程</span></div>
+<div id="wall"></div>
+<footer>数据：Metacritic 官方单集梗概中译 · 集名保留原文<br>「I love you, but you are not serious people.」</footer>
+<div id="ovl"></div>
+<div id="card"></div>
+<div id="badge">
+<div class="seal"><div class="b1">HEIR</div><div class="b2">WAYSTAR ROYCO</div></div>
+<div class="bt">你看完了全部三十九集</div>
+<div class="bq">「I love you, but you are not serious people.」<br>——罗根·罗伊</div>
+<button class="close" onclick="document.getElementById('badge').classList.remove('on')">CLOSE</button>
+</div>
+<script>
+var EPS=[{"s": 1, "n": 1, "en": "Celebration", "date": "May 6, 2018", "min": 65, "cn": "传媒巨头罗根·罗伊在八十岁寿宴上抛出震惊全家的消息。这击碎了他的儿子肯德尔——这位「既定继承人」正在谈判收购一家数字媒体公司。"}, {"s": 1, "n": 2, "en": "Sh*t Show at the F**k Factory", "date": "Jun 10, 2018", "min": 64, "cn": "罗根入院治疗，家人开始为最坏情况准备预案，暗流涌动。"}, {"s": 1, "n": 3, "en": "Lifeboats", "date": "Jun 17, 2018", "min": 63, "cn": "肯德尔与罗曼以 CEO 和 COO 的第一把火试图把公司拉出财务泥潭；玛西娜则阻止家人探望正在康复的罗伊。"}, {"s": 1, "n": 4, "en": "Sad Sack Wasp Trap", "date": "Jun 24, 2018", "min": 63, "cn": "全家出席由康纳操办的年度公司晚会，一场「惊喜宣布」成为全场焦点。"}, {"s": 1, "n": 5, "en": "I Went to Market", "date": "Jul 1, 2018", "min": 62, "cn": "肯德尔开始密谋对罗根的不信任投票；汤姆则对自己的婚前协议起了疑心。"}, {"s": 1, "n": 6, "en": "Which Side Are You On?", "date": "Jul 8, 2018", "min": 63, "cn": "罗曼与肯德尔努力拉拢董事会，希芙则在华盛顿另寻出路。"}, {"s": 1, "n": 7, "en": "Austerlitz", "date": "Jul 15, 2018", "min": 62, "cn": "罗伊一家聚在一起做家庭治疗；肯德尔的戒瘾决心受到考验。"}, {"s": 1, "n": 8, "en": "Prague", "date": "Jul 22, 2018", "min": 61, "cn": "汤姆办了一场「难忘」的单身派对；肯德尔与罗曼盯上了新的生意机会。"}, {"s": 1, "n": 9, "en": "Pre-Nuptial", "date": "Jul 29, 2018", "min": 64, "cn": "罗伊一家齐聚英国古堡出席希芙与汤姆的婚礼；肯德尔的计划被突然提速。"}, {"s": 1, "n": 10, "en": "Nobody Is Ever Missing", "date": "Aug 5, 2018", "min": 66, "cn": "罗曼遭遇技术故障，汤姆宣示领地，肯德尔跌至谷底——以悲剧收场。"}, {"s": 2, "n": 1, "en": "The Summer Palace", "date": "Aug 11, 2019", "min": 65, "cn": "英国之事后心神未定的肯德尔试图与父亲和解；罗根从银行家那里听到不客气的建议；汤姆谋算公司里的新位置。"}, {"s": 2, "n": 2, "en": "Vaulter", "date": "Aug 18, 2019", "min": 62, "cn": "罗曼与肯德尔对新媒体品牌 Vaulter 做「例行健康检查」；汤姆派格雷格去 ATN 揪出浪费；康纳与薇拉办派对宣告回纽约。"}, {"s": 2, "n": 3, "en": "Hunting", "date": "Aug 25, 2019", "min": 64, "cn": "罗根向心存怀疑的管理层宣布再次尝试收购皮尔斯家族；格雷格担心会前沟通危及自己在家族中的地位；康纳的竞选宣言惹恼了罗根。"}, {"s": 2, "n": 4, "en": "Safe Room", "date": "Sep 1, 2019", "min": 63, "cn": "罗曼开始为期六周的管理培训；ATN 总部因当家主播的丑闻陷入混乱，罗根与肯德尔密会 PGM 掌门人。"}, {"s": 2, "n": 5, "en": "Tern Haven", "date": "Sep 8, 2019", "min": 64, "cn": "一场周末宅邸聚会，希芙、罗曼与康纳为讨好皮尔斯家族纷纷「演过了头」。"}, {"s": 2, "n": 6, "en": "Argestes", "date": "Sep 15, 2019", "min": 63, "cn": "罗根与皮尔斯的交易告急；肯德尔、希芙与罗曼在危机公关策略上分歧巨大。"}, {"s": 2, "n": 7, "en": "Return", "date": "Sep 22, 2019", "min": 64, "cn": "英国之行，孩子们与生母谈判；罗根转向瑞娅寻求建议。"}, {"s": 2, "n": 8, "en": "Dundee", "date": "Sep 29, 2019", "min": 65, "cn": "罗伊全 clan 飞往罗根的苏格兰老家邓迪，庆祝他入行五十周年；肯德尔对薇拉戏剧里的女演员心生好感；一名前雇员难以被「消音」。"}, {"s": 2, "n": 9, "en": "DC", "date": "Oct 6, 2019", "min": 65, "cn": "罗根、肯德尔、格里与汤姆出席国会听证；希芙与关键证人基拉坦诚相对；在土耳其，罗曼的商业提案走向惊悚。"}, {"s": 2, "n": 10, "en": "This Is Not for Tears", "date": "Oct 13, 2019", "min": 74, "cn": "公司命运悬于一线，罗根开始在最亲密的盟友中寻找「替罪羊」。"}, {"s": 3, "n": 1, "en": "Secession", "date": "Oct 17, 2021", "min": 58, "cn": "发布会炸弹过后，自诩正义的肯德尔仓促寻找大本营；罗根的团队为「避险」奔走。"}, {"s": 3, "n": 2, "en": "Mass in Time of War", "date": "Oct 24, 2021", "min": 60, "cn": "肯德尔争取弟妹、斯图伊与桑迪站到自己一边；格雷格因法律困境向伊万求助。"}, {"s": 3, "n": 3, "en": "The Disruption", "date": "Oct 31, 2021", "min": 59, "cn": "司法部兵临城下，罗根召集他的「军火库」；汤姆抛出一个可能改变一生的提议；肯德尔沉迷于自己的「扳倒大计」。"}, {"s": 3, "n": 4, "en": "Lion in the Meadow", "date": "Nov 7, 2021", "min": 59, "cn": "罗根与肯德尔首次一同会见大投资人乔希——他正为这对父子的内斗忧心忡忡。"}, {"s": 3, "n": 5, "en": "Retired Janitors of Idaho", "date": "Nov 14, 2021", "min": 61, "cn": "年度股东大会上肯德尔与威士达团队被迫同台，罗根的健康突发变故。"}, {"s": 3, "n": 6, "en": "What It Takes", "date": "Nov 21, 2021", "min": 59, "cn": "罗根带队赴弗吉尼亚参加保守派政治大会，罗曼在那里得知关于母亲的惊人消息。"}, {"s": 3, "n": 7, "en": "Too Much Birthday", "date": "Nov 28, 2021", "min": 58, "cn": "肯德尔的奢华盛诞派对上，希芙与罗曼设法约见科技巨头卢卡斯·马特森——他刚刚冷落过罗根。"}, {"s": 3, "n": 8, "en": "Chiantishire", "date": "Dec 5, 2021", "min": 65, "cn": "意大利的一场豪华家族婚礼上，罗曼道出疑心，格里划清界限，威士达团队被「失控推文」搅得心神不宁。"}, {"s": 3, "n": 9, "en": "All the Bells Say", "date": "Dec 12, 2021", "min": 66, "cn": "马特森对公司的构想让希芙与罗曼忙于收拾残局，罗根权衡着他的选项。"}, {"s": 4, "n": 1, "en": "The Munsters", "date": "Mar 26, 2023", "min": 65, "cn": "肯德尔、希芙与罗曼在洛杉矶打磨投资人提案；罗根得知垂涎已久的收购标的出现了竞购方。"}, {"s": 4, "n": 2, "en": "Rehearsal", "date": "Apr 2, 2023", "min": 58, "cn": "三人组酝酿对马特森交易的激进打法；康纳全力操办自己的婚宴彩排。"}, {"s": 4, "n": 3, "en": "Connor's Wedding", "date": "Apr 9, 2023", "min": 62, "cn": "罗根赴会马特森前甩出一桩不体面的差事；康纳在自己的婚礼上纠结于细枝末节。"}, {"s": 4, "n": 4, "en": "Honeymoon States", "date": "Apr 16, 2023", "min": 59, "cn": "威士达团队讨论提交董事会的那份关键建议，罗曼、肯德尔与希芙因对马特森的一次失误而补救。"}, {"s": 4, "n": 5, "en": "Kill List", "date": "Apr 23, 2023", "min": 60, "cn": "团队飞抵挪威之后，希芙、肯德尔与罗盘算着是否要为罗根的「王冠上的宝石」而战。"}, {"s": 4, "n": 6, "en": "Living+", "date": "Apr 30, 2023", "min": 62, "cn": "投资人日前夜，希芙掂量马特森的提议；肯德尔与罗曼各自试图复刻罗根那暴躁的领导风格。"}, {"s": 4, "n": 7, "en": "Tailgate Party", "date": "May 7, 2023", "min": 61, "cn": "为了打通关节，肯德尔与罗曼让希芙邀请一位竞选核心人物来罗根的选前派对。"}, {"s": 4, "n": 8, "en": "America Decides", "date": "May 14, 2023", "min": 62, "cn": "大选之夜，汤姆努力控制一间 increasingly 混乱的新闻编辑室；三姐弟就选举结果对自己、公司与国家的后果激烈争执。"}, {"s": 4, "n": 9, "en": "Church and State", "date": "May 21, 2023", "min": 73, "cn": "家人为一场 emotional 的葬礼做准备；肯德尔与拉娃争执，又接到杰丝带来的不合时宜的消息；希芙在新政治格局中寻找落点；肯德尔召集支持者。"}, {"s": 4, "n": 10, "en": "With Open Eyes", "date": "May 28, 2023", "min": 88, "cn": "威士达-戈约交易的最终董事会前夜，肯德尔与希芙巩固各自的立场——并要找到身心俱创、下落不明的罗曼。"}];
+var SM=[["第一季", "2018", "寿宴上的一颗炸弹，掀开继承权战争的序幕。", "#C9A24A"], ["第二季", "2019", "替罪羊、野猪与国会听证——公司生死一线。", "#B85C3B"], ["第三季", "2021", "父子对峙，司法部入场，意大利婚礼暗流。", "#5A7A96"], ["第四季", "2023", "挪威、葬礼与最终董事会——王座只有一个。", "#8A8F8A"]];
+var KEY='succ_v1';
+var L={};
+try{L=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){L={}}
+var cur=-1;
+function lit(i){return !!L[i]}
+function count(s){return EPS.filter(function(e,x){return e.s===s&&lit(x)}).length}
+function render(){
+ var w=document.getElementById('wall'),h='';
+ SM.forEach(function(sm,si){
+  var total=EPS.filter(function(e){return e.s===si+1}).length;
+  h+='<section class="season"><div class="sh"><span class="num">S'+(si+1)+'</span><span class="nm">'+sm[0]+'</span><span class="yr">'+sm[1]+'</span><span class="cnt">'+count(si+1)+' / '+total+'</span></div>';
+  h+='<div class="tagline">'+sm[2]+'</div><div class="grid">';
+  EPS.forEach(function(e,x){
+   if(e.s!==si+1)return;
+   var c=lit(x)?' lit':'';
+   var st=e.min>=70?'<span class="star">✦</span>':'';
+   h+='<div class="ep'+c+'" data-i="'+x+'" onclick="openC('+x+')">'+st+'<div class="en2">EPISODE '+e.n+'</div><div class="no">E'+e.n+'</div><div class="tt">'+e.en+'</div><div class="dt">'+e.date+'</div><div class="tick">✓</div></div>';
+  });
+  h+='</div></section>';
+ });
+ w.innerHTML=h;
+ var n=EPS.filter(function(e,x){return lit(x)}).length;
+ document.getElementById('h2').textContent=n+'/39';
+ document.getElementById('h3').textContent=n===0?'未启程':(n===39?'继承完成':'观看中');
+}
+function openC(x){
+ cur=x;var e=EPS[x];
+ var c=document.getElementById('card');
+ c.innerHTML='<div class="ce">SEASON '+e.s+' · EPISODE '+e.n+'</div><h3>'+e.en+'</h3><div class="cd">首播 '+e.date+' · <span class="lm">'+e.min+' 分钟</span>'+(e.min>=70?' · ✦ 超长特别集':'')+'</div><div class="ds">'+e.cn+'</div><div class="ls"><button class="nope" onclick="closeC(false)">还没看</button><button class="done" onclick="closeC(true)">看完点亮 ✓</button></div>';
+ c.classList.add('up');document.getElementById('ovl').classList.add('on');
+}
+function closeC(mark){
+ if(mark&&cur>=0){L[cur]=1;localStorage.setItem(KEY,JSON.stringify(L))}
+ document.getElementById('card').classList.remove('up');
+ document.getElementById('ovl').classList.remove('on');
+ cur=-1;render();check();
+}
+document.getElementById('ovl').onclick=function(){closeC(false)};
+function check(){
+ if(EPS.every(function(e,x){return lit(x)})){
+  setTimeout(function(){document.getElementById('badge').classList.add('on')},400);
+ }
+}
+render();
+</script>
+</body>
+</html>
